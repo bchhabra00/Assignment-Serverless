@@ -1,0 +1,81 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: serverless-rest-api
+
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  iamRoleStatements:
+   - Effect : Allow
+     Action:
+       - dynamodb:DescriptionTable
+       - dynamodb:Query
+       - dynamodb:Scan
+       - dynamodb:GetItem
+       - dynamodb:PutItem
+       - dynamodb:UpdateItem
+       - dynamodb:DeleteItem     
+     Resource: "arn:aws:dynamodb:us-east-1:*:*""   
+
+functions:
+  create:
+    handler: recipe/create.create
+    events:
+      http:
+      path: recipe
+      method: post
+      cors: true
+        
+  list:
+    handler:recipe/list.list
+    events:
+      http:
+      path: recipe
+      method: get
+      cors: true
+          
+  get:
+    handler:recipe/get.get
+    events:
+      http:
+      path: recipe/{id}
+      method: get
+      cors: true  
+
+
+
+functions:
+  hello:
+    handler: handler.hello
+
+resources:
+  Resources:
+  RecipeDynamoDbTables:  
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          
+          AttributeName: id
+          AttributeType: S
+        KeySchema:  
+          
+          AttributeName: id
+          AttributeType: Hash
+        ProvisionedThroughput:
+        
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName:'recipe'
